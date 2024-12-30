@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome | Mohan Kirushna R</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #000000, #ffffff); /* Default gradient for dark mode */
+            color: #333; /* Default text color */
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            transition: background 0.5s ease-in-out, color 0.5s ease-in-out;
+            position: relative;
+        }
+
+        .background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #000000, #ffffff); /* Default gradient for dark mode */
+            background-size: 400% 400%;
+            animation: gradientMove 10s ease infinite;
+            z-index: -3; /* Place background at the lowest level */
+        }
+
+        @keyframes gradientMove {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .container {
+            width: 80%;
+            max-width: 900px;
+            padding: 20px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.8); /* White background with transparency */
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            opacity: 0.9; /* Slight transparency for the entire container */
+            animation: fadeIn 2s forwards;
+            z-index: 1; /* Content should appear above the cube */
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: #1c1c1c;
+            margin-bottom: 20px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            animation: slideIn 1s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+
+        p {
+            font-size: 1.2rem;
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            opacity: 0;
+            animation: fadeInText 2s 1s forwards;
+        }
+
+        @keyframes fadeInText {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            color: #fff;
+            background: #3a8d99;
+            text-decoration: none;
+            border-radius: 50px;
+            transition: all 0.3s ease-in-out;
+            opacity: 0;
+            animation: fadeInButton 3s 1.5s forwards;
+        }
+
+        @keyframes fadeInButton {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        .cta-button:hover {
+            background: #297a84;
+            transform: translateY(-5px);
+        }
+
+        #webgl-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: -2; /* Cube in the middle, below the content */
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Dark Mode Styles */
+        body.dark-mode {
+            background: linear-gradient(135deg, #121212, #222222); /* Darker background */
+            color: #fff; /* Light text color */
+        }
+
+        .dark-mode .container {
+            background: rgba(0, 0, 0, 0.8); /* Darker background for the container */
+        }
+
+        .dark-mode h1,
+        .dark-mode p {
+            color: #fff; /* White text color for dark mode */
+        }
+
+        /* Light Mode Styles */
+        body.light-mode {
+            background: linear-gradient(135deg, #f0f0f0, #ffffff); /* Light background */
+            color: #000; /* Dark text color */
+        }
+
+        .light-mode .container {
+            background: rgba(255, 255, 255, 0.8); /* Light background for the container */
+        }
+
+        .light-mode h1,
+        .light-mode p {
+            color: #000; /* Black text color for light mode */
+        }
+
+        /* Toggle Button */
+        .toggle-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #3a8d99;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .toggle-button:hover {
+            background: #297a84;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="background"></div> <!-- Smooth moving black and white gradient background -->
+
+    <!-- WebGL canvas for 3D Cube -->
+    <canvas id="webgl-canvas"></canvas>
+
+    <div class="container">
+        <h1>Welcome to My Portfolio</h1>
+        <p>I'm Mohan Kirushna R, a passionate software developer, focused on creating meaningful digital experiences using cutting-edge technologies. Let's work together and make your ideas come to life!</p>
+        <p class="note">Note: The cube's movement is cursor-dependent.</p>
+        <a href="projects.html" class="cta-button" target="_blank">View My Work</a> <!-- Link to projects page -->
+    </div>
+
+    <!-- Dark/Light Mode Toggle Button -->
+    <button class="toggle-button" onclick="toggleTheme()">Toggle Dark/Light Mode</button>
+
+    <!-- Add three.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+    <script>
+        // Set up scene, camera, and renderer
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById("webgl-canvas") });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        // Create a larger 3D cube with basic material
+        const geometry = new THREE.BoxGeometry(10, 10, 10); // Increase size further (10x10x10)
+        const material = new THREE.MeshBasicMaterial({ color: 0x44aa88 });
+        const cube = new THREE.Mesh(geometry, material);
+        scene.add(cube);
+
+        // Add a light source to the scene (for better visibility)
+        const light = new THREE.AmbientLight(0xffffff);  // Soft white light
+        scene.add(light);
+
+        // Set camera position and orientation (move camera further back for larger cube)
+        camera.position.z = 20; // Increase camera distance to fit larger cube
+
+        // Mouse movement handler to rotate the cube
+        let mouseX = 0;
+        let mouseY = 0;
+
+        document.addEventListener("mousemove", (event) => {
+            mouseX = (event.clientX / window.innerWidth) * 2 - 1;  // Map mouseX to [-1, 1]
+            mouseY = -(event.clientY / window.innerHeight) * 2 + 1; // Map mouseY to [-1, 1]
+        });
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // Update the cube's rotation based on mouse movement
+            cube.rotation.x += 0.01; // Slower rotation speed for X axis
+            cube.rotation.y += 0.01; // Slower rotation speed for Y axis
+
+            // Adjust rotation based on mouse movement
+            cube.rotation.x += mouseY * 0.1;  // Mouse Y direction to rotation X
+            cube.rotation.y += mouseX * 0.1;  // Mouse X direction to rotation Y
+
+            // Render the scene with the camera
+            renderer.render(scene, camera);
+        }
+
+        animate();
+
+        // Resize handling
+        window.addEventListener('resize', () => {
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+        });
+
+        // Dark/Light Mode Toggle Function
+        function toggleTheme() {
+            const body = document.body;
+            if (body.classList.contains('dark-mode')) {
+                body.classList.remove('dark-mode');
+                body.classList.add('light-mode');
+            } else {
+                body.classList.remove('light-mode');
+                body.classList.add('dark-mode');
+            }
+        }
+    </script>
+
+</body>
+</html>
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot Integration | Mohan Kirushna R</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Styling for the chatbot container */
+        #chatbot-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        #chatbot-toggle {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        #chatbot-window {
+            display: none;
+            width: 300px;
+            height: 400px;
+            border: 2px solid #ddd;
+            padding: 10px;
+            background-color: white;
+            position: absolute;
+            bottom: 60px;
+            right: 0;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        #chatbot-header {
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        #chatbot-messages {
+            overflow-y: auto;
+            height: 270px;
+            margin-bottom: 10px;
+            padding: 5px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .user-message, .bot-message {
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 5px;
+        }
+
+        .user-message {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .bot-message {
+            background-color: #f1f1f1;
+            color: #333;
+        }
+
+        #chatbot-input-area {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        #chatbot-input {
+            width: 70%;
+            padding: 5px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        #chatbot-send {
+            background-color: var(--highlight-color);
+            color: #fff;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* New button for asking questions */
+        #question-button {
+            position: fixed;
+            bottom: 100px;
+            left: 20px;
+            z-index: 1000;
+            background-color: #ff5722;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        /* New section for questions list */
+        #questions-list {
+            display: none;
+            position: fixed;
+            bottom: 150px;
+            left: 20px;
+            width: 250px;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            z-index: 1001;
+        }
+
+        #questions-list ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        #questions-list ul li {
+            margin: 5px 0;
+            font-size: 14px;
+            color: black;
+            cursor: pointer;
+        }
+
+        #questions-list ul li:hover {
+            background-color: #f1f1f1;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Chatbot container -->
+    <div id="chatbot-container">
+        <button id="chatbot-toggle">💬</button>
+        <div id="chatbot-window">
+            <div id="chatbot-header">Chat with Me</div>
+            <div id="chatbot-messages"></div>
+            <div id="chatbot-input-area">
+                <input id="chatbot-input" type="text" placeholder="Type a message...">
+                <button id="chatbot-send" onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Button for showing questions -->
+    <button id="question-button" onclick="toggleQuestionsList()">What Questions Can I Ask?</button>
+
+    <!-- Questions list -->
+    <div id="questions-list">
+        <ul>
+            <li>What’s your name?</li>
+            <li>Who are you?</li>
+            <li>Tell me about yourself.</li>
+            <li>How are you?</li>
+            <li>What do you do?</li>
+            <li>Where are you from?</li>
+            <li>What is your portfolio about?</li>
+            <li>Where can I view your projects?</li>
+            <li>Can you tell me about your portfolio design?</li>
+            <li>What projects have you worked on?</li>
+            <li>Can you tell me more about your specific project?</li>
+            <li>What technologies did you use in your projects?</li>
+            <li>Where can I download your resume?</li>
+            <li>How can I contact you?</li>
+        </ul>
+    </div>
+
+    <script>
+        // Toggle questions list visibility
+        function toggleQuestionsList() {
+            const questionsList = document.getElementById("questions-list");
+            questionsList.style.display = (questionsList.style.display === "none" || questionsList.style.display === "") ? "block" : "none";
+        }
+
+        // Handle question click
+        document.querySelectorAll('#questions-list ul li').forEach(function(question) {
+            question.addEventListener('click', function() {
+                let userQuestion = question.textContent;
+                handleUserMessage(userQuestion);
+            });
+        });
+
+        // Function to handle user message and bot's response
+        function handleUserMessage(userMessage) {
+            let messageContainer = document.getElementById("chatbot-messages");
+
+            // Display user message
+            let userDiv = document.createElement("div");
+            userDiv.classList.add("user-message");
+            userDiv.textContent = userMessage;
+            messageContainer.appendChild(userDiv);
+
+            // Bot's response
+            let botMessage = getBotResponse(userMessage);
+
+            // Display bot message
+            let botDiv = document.createElement("div");
+            botDiv.classList.add("bot-message");
+            botDiv.textContent = botMessage;
+            messageContainer.appendChild(botDiv);
+
+            // Scroll to the bottom of the chat
+            messageContainer.scrollTop = messageContainer.scrollHeight;
+        }
+
+        // Function to get the bot's response based on the user's question
+        function getBotResponse(userMessage) {
+            const responses = {
+                "What’s your name?": "My name is Mohan Kirushna R.",
+                "Who are you?": "I am a machine learning enthusiast, currently working on projects related to AI and ML.",
+                "Tell me about yourself.": "I’m a Computer Science student at VIT Chennai, passionate about AI, machine learning, and software development.",
+                "How are you?": "I’m doing great, thank you for asking!",
+                "What do you do?": "I specialize in AI, ML, and building innovative solutions using modern technologies.",
+                "Where are you from?": "I am from Chennai, India.",
+                "What is your portfolio about?": "My portfolio showcases my projects, skills, and experiences in the field of AI and machine learning.",
+                "Where can I view your projects?": "You can view my projects on my GitHub page: [GitHub Profile](https://github.com/Mohankirushna).",
+                "Can you tell me about your portfolio design?": "My portfolio is designed to showcase my skills, work, and achievements in AI and machine learning with a clean, professional look.",
+                "What projects have you worked on?": "I have worked on various projects related to machine learning, such as Titanic survival prediction, data preprocessing techniques, and NLP projects.",
+                "Can you tell me more about your specific project?": "Sure! I have worked on several ML projects like Titanic survival prediction, exploring datasets to develop prediction models using Random Forest and other algorithms.",
+                "What technologies did you use in your projects?": "I primarily use Python, TensorFlow, Scikit-learn, Pandas, NumPy, and other AI/ML tools in my projects.",
+                "Where can I download your resume?": "You can download my resume from the following link: [Resume Link](#).",
+                "How can I contact you?": "You can contact me through my [LinkedIn](https://www.linkedin.com/in/mohankirushna/) or via email at example@domain.com."
+            };
+
+            // Return the corresponding response or a default response
+            return responses[userMessage] || "I'm sorry, I don't have an answer to that question right now.";
+        }
+
+        // Send message function
+        function sendMessage() {
+            let userMessage = document.getElementById("chatbot-input").value;
+            if (!userMessage.trim()) return;
+
+            // Display user message
+            let messageContainer = document.getElementById("chatbot-messages");
+            let userDiv = document.createElement("div");
+            userDiv.classList.add("user-message");
+            userDiv.textContent = userMessage;
+            messageContainer.appendChild(userDiv);
+
+            // Get bot response and display it
+            let botMessage = getBotResponse(userMessage);
+            let botDiv = document.createElement("div");
+            botDiv.classList.add("bot-message");
+            botDiv.textContent = botMessage;
+            messageContainer.appendChild(botDiv);
+
+            // Clear input
+            document.getElementById("chatbot-input").value = '';
+
+            // Scroll to bottom
+            messageContainer.scrollTop = messageContainer.scrollHeight;
+        }
+
+        // Toggle the chatbot window
+        document.getElementById("chatbot-toggle").addEventListener("click", function() {
+            const chatbotWindow = document.getElementById("chatbot-window");
+            chatbotWindow.style.display = (chatbotWindow.style.display === "none" || chatbotWindow.style.display === "") ? "block" : "none";
+        });
+    </script>
+</body>
+</html>

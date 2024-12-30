@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clickable Chatbot</title>
+    <style>
+        /* Style for the chatbot container */
+        .chatbot-container {
+            width: 300px;
+            height: 400px;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #f1f1f1;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+        }
+        /* Style for the chat window */
+        .chat-window {
+            flex: 1;
+            padding: 10px;
+            overflow-y: scroll;
+            background-color: white;
+            border-radius: 10px 10px 0 0;
+            margin-bottom: 5px;
+        }
+        /* Style for user and bot messages */
+        .message {
+            margin: 5px 0;
+            padding: 5px;
+            border-radius: 5px;
+        }
+        .user-message {
+            background-color: #d1e7ff;
+            align-self: flex-end;
+        }
+        .bot-message {
+            background-color: #e7f7d1;
+            align-self: flex-start;
+        }
+        /* Button style */
+        .chat-button {
+            width: 100%;
+            padding: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 0 0 10px 10px;
+            cursor: pointer;
+        }
+        .chat-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="chatbot-container">
+        <div class="chat-window" id="chat-window">
+            <div class="message bot-message">Hi Tech Geeks! How can I assist you today?</div>
+        </div>
+        <button class="chat-button" id="open-chat">Open Chatbot</button>
+    </div>
+
+    <script>
+        // Chatbot interaction logic
+        const chatWindow = document.getElementById('chat-window');
+        const openChatButton = document.getElementById('open-chat');
+
+        openChatButton.addEventListener('click', function() {
+            let userMessage = prompt("Please enter your message:");
+
+            if (userMessage) {
+                // Display user message
+                const userMessageElement = document.createElement('div');
+                userMessageElement.classList.add('message', 'user-message');
+                userMessageElement.textContent = userMessage;
+                chatWindow.appendChild(userMessageElement);
+                
+                // Simulate bot response
+                const botResponseElement = document.createElement('div');
+                botResponseElement.classList.add('message', 'bot-message');
+                botResponseElement.textContent = "Thank you for your message! Here's a response.";
+                chatWindow.appendChild(botResponseElement);
+
+                // Scroll to the bottom
+                chatWindow.scrollTop = chatWindow.scrollHeight;
+            }
+        });
+    </script>
+
+</body>
+</html>
